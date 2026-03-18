@@ -1,101 +1,73 @@
-# terraform-modules-project (V2)
+# Terraform Modules Project V2
 
-Minimal, junior-friendly Terraform stack built from small composable modules:
-- **vpc-basic** — VPC with 2 public subnets (across AZs), IGW, route table.
-- **ec2-web** — EC2 (AL2023 via SSM), optional SG, CloudWatch alarm (CPU > 70%).
-- **s3-basic** — S3 with Versioning + Lifecycle to Glacier.
-- **rds-mysql-basic** — RDS MySQL (minimal) + CloudWatch alarm (CPU > 70%).
-- **alb-basic** — ALB + target group + listener (HTTP/80) + latency alarm (> 0.7s).
-- **ecs-basic** — ECS Fargate (nginx) with public IP + CloudWatch alarm (CPU > 70%).
-
-All modules avoid hard-coding and expose clear inputs/outputs. 
+Minimal Terraform project built from reusable AWS infrastructure modules.
 
 ---
 
-## Quick start
+## Overview
 
-**Prereqs**
-- Terraform ≥ 1.5
-- AWS credentials configured (`aws configure`) and region set (`AWS_REGION` or `providers.tf`)
+A simple modular Terraform lab that demonstrates how to compose AWS infrastructure using small, reusable modules such as VPC, EC2, S3, RDS, ALB, and ECS. :contentReference[oaicite:0]{index=0}
 
-**Run**
+---
+
+## Tech Stack
+
+- Terraform
+- AWS
+- HCL
+- CloudWatch
+
+---
+
+## Quick Start
+
 ```bash
 terraform fmt -recursive
 terraform init -upgrade
 terraform validate
 terraform plan -out=tfplan.bin
 terraform apply tfplan.bin
-
-
-Key outputs (examples)
-
-VPC: vpc_id, public_subnet_ids
-
-EC2: ec2_instance_id, ec2_public_ip, ec2_cpu_alarm
-
-S3: s3_bucket_name
-
-RDS: rds_endpoint, rds_alarm_arn
-
-ALB: alb_dns_name, alb_alarm_arn
-
-ECS: ecs_cluster_name, ecs_service_name, ecs_alarm_name
-
-Cleanup
-
-If the S3 bucket isn’t force_destroy:
-
-aws s3 rm "s3://<bucket>" --recursive || true
-
-
-Then:
-
-terraform destroy -auto-approve
+```
 
 ---
 
-Repo layout
-.
-├─ main.tf            # Composes modules into the final stack
-├─ providers.tf       # AWS provider + region
-├─ versions.tf        # Terraform & provider version constraints
-├─ variables.tf       # Shared inputs (e.g., tags)
-├─ outputs.tf         # Root-level outputs
-├─ evidence-root.*    # Optional root evidence
-└─ modules/
-   ├─ vpc-basic/
-   ├─ ec2-web/
-   ├─ s3-basic/
-   ├─ rds-mysql-basic/
-   ├─ alb-basic/
-   └─ ecs-basic/
-     (each with: main.tf, variables.tf, outputs.tf, README.md)
+## Usage
 
+This project includes modular infrastructure for:
 
-State/plan files are ignored via .gitignore
+- VPC with public subnets
+
+- EC2 web instance
+
+- S3 bucket
+
+- RDS MySQL
+
+- Application Load Balancer
+
+- ECS Fargate service
+
+Common outputs include VPC IDs, subnet IDs, EC2 public IP, S3 bucket name, RDS endpoint, ALB DNS name, and ECS service details.
 
 ---
 
-## 🧪 Infrastructure Validation
+## Cleanup
 
-All Terraform modules (**S3**, **VPC**, **EC2**, **ECS**, **RDS**, **ALB**) were validated locally using:
+If needed, empty the S3 bucket first:
 
 ```bash
-terraform fmt -recursive
-terraform init
-terraform validate
-terraform plan -out=tfplan.bin
+aws s3 rm "s3://<bucket>" --recursive || true
 terraform destroy -auto-approve
-Validation results:
+```
 
-All modules successfully initialized and validated.
+---
 
-terraform plan produced correct resource previews without errors.
+## Notes
 
-No apply was executed (logical validation only) to avoid AWS resource charges.
+- Built for learning and modular Terraform practice
 
-Each module includes its own outputs.tf file showing verified configurations.
+- Uses separate reusable modules under modules/
 
-✅ Terraform configurations verified successfully across all modules.
+- Validation was completed locally without running a full apply to avoid AWS costs
 
 ---
