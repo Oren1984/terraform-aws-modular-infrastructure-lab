@@ -1,12 +1,32 @@
-# Terraform Modules Project V2
+# Terraform AWS Modular Infrastructure Lab
 
-Minimal Terraform project built from reusable AWS infrastructure modules.
+A modular Terraform infrastructure lab demonstrating how multiple reusable AWS modules can be composed into a complete environment.
 
 ---
 
 ## Overview
 
-A simple modular Terraform lab that demonstrates how to compose AWS infrastructure using small, reusable modules such as VPC, EC2, S3, RDS, ALB, and ECS. :contentReference[oaicite:0]{index=0}
+This project demonstrates the implementation of a broad AWS infrastructure stack using independent and reusable Terraform modules.
+
+The repository was created as a hands-on infrastructure engineering lab. Its purpose is to demonstrate modular design, dependency management, Terraform outputs, provider configuration, and the integration of several AWS services within a single project.
+
+This is not intended to represent a minimal production architecture. Individual modules can be selected and adapted according to the requirements of a real environment.
+
+---
+
+## Architecture Components
+
+The project includes reusable Terraform modules for:
+
+- VPC and public networking
+- EC2 web instance
+- S3 storage
+- RDS MySQL database
+- Application Load Balancer
+- ECS Fargate service
+- CloudWatch integration
+
+Modules are stored under the `modules/` directory and are composed through the root Terraform configuration.
 
 ---
 
@@ -15,59 +35,100 @@ A simple modular Terraform lab that demonstrates how to compose AWS infrastructu
 - Terraform
 - AWS
 - HCL
-- CloudWatch
+- Amazon VPC
+- Amazon EC2
+- Amazon S3
+- Amazon RDS
+- Application Load Balancer
+- Amazon ECS Fargate
+- Amazon CloudWatch
 
 ---
 
-## Quick Start
+## Project Structure
 
-```bash
-terraform fmt -recursive
-terraform init -upgrade
-terraform validate
-terraform plan -out=tfplan.bin
-terraform apply tfplan.bin
+```text
+.
+├── modules/
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── providers.tf
+├── versions.tf
+├── .terraform.lock.hcl
+└── README.md
 ```
 
 ---
 
-## Usage
+## Validation
 
-This project includes modular infrastructure for:
+The Terraform configuration can be formatted and validated locally:
 
-- VPC with public subnets
+```bash
+terraform fmt -recursive
+terraform init
+terraform validate
+```
 
-- EC2 web instance
+To review the proposed infrastructure changes:
 
-- S3 bucket
+```bash
+terraform plan -out=tfplan.bin
+```
 
-- RDS MySQL
+A full AWS deployment was intentionally not executed in order to avoid unnecessary cloud costs.
 
-- Application Load Balancer
+---
 
-- ECS Fargate service
+## Deployment
 
-Common outputs include VPC IDs, subnet IDs, EC2 public IP, S3 bucket name, RDS endpoint, ALB DNS name, and ECS service details.
+To deploy the infrastructure after reviewing the execution plan:
+
+```bash
+terraform apply tfplan.bin
+```
+
+AWS credentials and the required input variables must be configured before deployment.
 
 ---
 
 ## Cleanup
 
-If needed, empty the S3 bucket first:
+Before destroying the environment, ensure that any created S3 bucket is empty:
 
 ```bash
-aws s3 rm "s3://<bucket>" --recursive || true
-terraform destroy -auto-approve
+aws s3 rm "s3://<bucket-name>" --recursive
+terraform destroy
 ```
 
 ---
 
-## Notes
+## Security Notes
 
-- Built for learning and modular Terraform practice
+Terraform state files, local variable files, generated plans, and local Terraform directories are excluded from version control.
 
-- Uses separate reusable modules under modules/
+Do not commit:
 
-- Validation was completed locally without running a full apply to avoid AWS costs
+- AWS credentials
+- Terraform state files
+- Secret variable files
+- Generated plan files
+- Sensitive infrastructure outputs
 
 ---
+
+## Project Scope
+
+This repository is a portfolio and learning project focused on:
+
+- Terraform module composition
+- Infrastructure dependency management
+- AWS infrastructure fundamentals
+- Reusable Infrastructure as Code design
+- Local validation and planning workflows
+
+The project intentionally demonstrates multiple AWS components in one environment. In a production implementation, only the modules required by the approved architecture and business requirements should be deployed.
+
+---
+
