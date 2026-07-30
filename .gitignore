@@ -20,4 +20,4 @@ crash.log
 
 # Keep the lock file pinned in git
 !.terraform.lock.hcl
-EOF
+
